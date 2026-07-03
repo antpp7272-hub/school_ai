@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>School AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <button class="new-chat" onclick="newChat()">
+            + New Chat
+        </button>
+
+        <div class="history" id="history">
+
+        </div>
+
+    </div>
+
+
+    <!-- Main Chat -->
+    <div class="main">
+
+        <h1>School AI</h1>
+
+        <div id="chat"></div>
+
+        <div class="input-area">
+
+            <input 
+                id="message"
+                placeholder="ถามอะไรเกี่ยวกับโรงเรียน..."
+                onkeypress="handleEnter(event)"
+            >
+
+            <button onclick="sendMessage()">Send</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function typeText(text){
+
+    let chat = document.getElementById("chat")
+
+    let p = document.createElement("p")
+
+    p.className = "ai"
+
+    p.innerHTML = "🤖 "
+
+    chat.appendChild(p)
+
+    for(let i = 0; i < text.length; i++){
+
+        p.innerHTML += text[i]
+
+        chat.scrollTop = chat.scrollHeight
+
+        await new Promise(resolve =>
+            setTimeout(resolve, 30)
+        )
+    }
+}
+
+
+async function sendMessage(){
+
+    let text = document.getElementById("message").value
+
+    if(text == ""){
+        return
+    }
+
+    document.getElementById("message").value = ""
+
+    let chat = document.getElementById("chat")
+    let history = document.getElementById("history")
+
+    // User message
+    chat.innerHTML +=
+        "<p class='user'>🧑 " + text + "</p>"
+
+    // History
+    history.innerHTML +=
+        "<p>" + text + "</p>"
+
+    chat.scrollTop = chat.scrollHeight
+
+
+    let response = await fetch("/ask", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            question: text
+        })
+    })
+
+
+    let data = await response.json()
+
+    await typeText(data.answer)
+}
+
+
+// New Chat
+function newChat(){
+
+    document.getElementById("chat").innerHTML = ""
+}
+
+
+// Press Enter to Send
+function handleEnter(event){
+
+    if(event.key === "Enter"){
+
+        sendMessage()
+    }
+}
+
+</script>
+
+</body>
+
+</html>
