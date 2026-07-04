@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b5ed7">
-  <meta name="description" content="School AI ผู้ช่วยตอบคำถามเกี่ยวกับข้อมูลโรงเรียน">
-  <title>School AI</title>
+  <meta name="description" content="ลูกผึ้ง AI ผู้ช่วยตอบคำถามเกี่ยวกับข้อมูลโรงเรียน">
+  <title>ลูกผึ้ง AI</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -14,7 +14,7 @@
       <div class="brand">
         <div class="brand-logo" aria-hidden="true">🎓</div>
         <div>
-          <h1>School AI</h1>
+          <h1>ลูกผึ้ง AI</h1>
           <p><span class="online-dot"></span>ผู้ช่วยข้อมูลโรงเรียน</p>
         </div>
       </div>
@@ -43,7 +43,7 @@
           <article class="message ai-message">
             <div class="avatar">AI</div>
             <div class="message-body">
-              <div class="sender">School AI</div>
+              <div class="sender">ลูกผึ้ง AI</div>
               <div class="bubble">สวัสดีครับ 👋 ผมพร้อมช่วยค้นหาและตอบคำถามเกี่ยวกับข้อมูลของโรงเรียน เลือกคำถามแนะนำหรือพิมพ์คำถามด้านล่างได้เลยครับ</div>
             </div>
           </article>
@@ -93,7 +93,7 @@
 
       const sender = document.createElement('div');
       sender.className = 'sender';
-      sender.textContent = role === 'user' ? 'คุณ' : 'School AI';
+      sender.textContent = role === 'user' ? 'คุณ' : 'ลูกผึ้ง AI';
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
