@@ -8,6 +8,7 @@ from typing import Any
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 from google import genai
+from google.genai import errors
 
 
 # ==========================
@@ -20,7 +21,10 @@ DATA_FILE = BASE_DIR / "school_data.json"
 load_dotenv(BASE_DIR / ".env")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash").strip()
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite").strip()
+GEMINI_FALLBACK_MODEL = os.getenv(
+    "GEMINI_FALLBACK_MODEL", "gemini-3.5-flash"
+).strip()
 
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
@@ -151,18 +155,88 @@ def ask():
 {question}
 """.strip()
 
-    try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
-        )
-        answer = (response.text or "").strip()
+    models_to_try = [GEMINI_MODEL]
 
-        if not answer:
-            answer = "ขออภัย ระบบไม่ได้รับคำตอบจาก AI กรุณาลองใหม่อีกครั้ง"
-    except Exception as error:
-        app.logger.exception("Gemini request failed")
-        return jsonify({"answer": f"เกิดข้อผิดพลาด: {error}"}), 502
+    if (
+        GEMINI_FALLBACK_MODEL
+        and GEMINI_FALLBACK_MODEL not in models_to_try
+    ):
+        models_to_try.append(GEMINI_FALLBACK_MODEL)
+
+    answer = ""
+    last_error: errors.APIError | None = None
+
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+            )
+            answer = (response.text or "").strip()
+
+            if answer:
+                break
+
+        except errors.APIError as error:
+            last_error = error
+            app.logger.warning(
+                "Gemini model %s failed with code %s: %s",
+                model_name,
+                error.code,
+                error.message,
+            )
+
+            # ถ้าโควตาของโมเดลหลักเต็ม ให้ลองโมเดลสำรองต่อ
+            if error.code == 429:
+                continue
+
+            if error.code in {500, 503, 504}:
+                continue
+
+            return (
+                jsonify(
+                    {
+                        "answer": (
+                            "ขออภัย ระบบ AI ไม่สามารถประมวลผลคำถามนี้ได้ "
+                            "กรุณาลองใหม่อีกครั้งครับ"
+                        )
+                    }
+                ),
+                int(error.code or 502),
+            )
+
+        except Exception:
+            app.logger.exception(
+                "Unexpected Gemini error while using %s",
+                model_name,
+            )
+            return (
+                jsonify(
+                    {
+                        "answer": (
+                            "ขออภัย ระบบขัดข้องชั่วคราว "
+                            "กรุณาลองใหม่อีกครั้งครับ"
+                        )
+                    }
+                ),
+                502,
+            )
+
+    if not answer:
+        if last_error and last_error.code == 429:
+            return (
+                jsonify(
+                    {
+                        "answer": (
+                            "ขออภัยครับ วันนี้ระบบ AI ใช้งานครบตามโควตาแล้ว "
+                            "กรุณาลองใหม่ภายหลัง หรือติดต่อผู้ดูแลระบบครับ"
+                        )
+                    }
+                ),
+                429,
+            )
+
+        answer = "ขออภัย ระบบไม่ได้รับคำตอบจาก AI กรุณาลองใหม่อีกครั้ง"
 
     chat_history.append({"role": "assistant", "text": answer})
     chat_history = chat_history[-MAX_HISTORY:]
