@@ -1,142 +1,184 @@
-<!DOCTYPE html>
-<html>
-
+<!doctype html>
+<html lang="th">
 <head>
-    <title>School AI</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b5ed7">
+  <meta name="description" content="School AI ผู้ช่วยตอบคำถามเกี่ยวกับข้อมูลโรงเรียน">
+  <title>School AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">🎓</div>
+        <div>
+          <h1>School AI</h1>
+          <p><span class="online-dot"></span>ผู้ช่วยข้อมูลโรงเรียน</p>
+        </div>
+      </div>
+      <button id="clear-chat" class="clear-button" type="button" title="เริ่มบทสนทนาใหม่" aria-label="เริ่มบทสนทนาใหม่">↻</button>
+    </header>
 
-<div class="container">
+    <main class="layout">
+      <aside class="intro-card">
+        <span class="eyebrow">ยินดีต้อนรับ</span>
+        <h2>ค้นหาข้อมูลโรงเรียนได้ง่ายขึ้น</h2>
+        <p>ถามข้อมูลเกี่ยวกับคุณครู อาคารเรียน ตารางเรียน ข่าวประชาสัมพันธ์ และข้อมูลอื่นที่มีอยู่ในระบบ</p>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-
-        <button class="new-chat" onclick="newChat()">
-            + New Chat
-        </button>
-
-        <div class="history" id="history">
-
+        <div class="quick-grid" aria-label="คำถามแนะนำ">
+          <button type="button" class="quick-button" data-question="โรงเรียนมีข้อมูลอะไรบ้าง"><span>🏫</span>ข้อมูลโรงเรียน</button>
+          <button type="button" class="quick-button" data-question="มีข้อมูลคุณครูอะไรบ้าง"><span>👩‍🏫</span>ข้อมูลคุณครู</button>
+          <button type="button" class="quick-button" data-question="มีอาคารเรียนอะไรบ้าง"><span>🏢</span>อาคารเรียน</button>
+          <button type="button" class="quick-button" data-question="มีข่าวประชาสัมพันธ์อะไรบ้าง"><span>📢</span>ข่าวประชาสัมพันธ์</button>
         </div>
 
-    </div>
+        <div class="notice">🔒 ไม่ควรส่งรหัสผ่านหรือข้อมูลส่วนตัวที่สำคัญ</div>
+      </aside>
 
-
-    <!-- Main Chat -->
-    <div class="main">
-
-        <h1>School AI</h1>
-
-        <div id="chat"></div>
-
-        <div class="input-area">
-
-            <input 
-                id="message"
-                placeholder="ถามอะไรเกี่ยวกับโรงเรียน..."
-                onkeypress="handleEnter(event)"
-            >
-
-            <button onclick="sendMessage()">Send</button>
-
+      <section class="chat-card" aria-label="หน้าต่างสนทนา">
+        <div id="chat-box" class="chat-box" aria-live="polite">
+          <div class="date-chip">วันนี้</div>
+          <article class="message ai-message">
+            <div class="avatar">AI</div>
+            <div class="message-body">
+              <div class="sender">School AI</div>
+              <div class="bubble">สวัสดีครับ 👋 ผมพร้อมช่วยค้นหาและตอบคำถามเกี่ยวกับข้อมูลของโรงเรียน เลือกคำถามแนะนำหรือพิมพ์คำถามด้านล่างได้เลยครับ</div>
+            </div>
+          </article>
         </div>
 
-    </div>
+        <div class="composer-wrap">
+          <form id="chat-form" class="composer">
+            <label class="sr-only" for="question">พิมพ์คำถาม</label>
+            <textarea id="question" rows="1" maxlength="2000" autocomplete="off" enterkeyhint="send" placeholder="พิมพ์คำถามของคุณ..." required></textarea>
+            <button id="send-button" class="send-button" type="submit" aria-label="ส่งข้อความ">➤</button>
+          </form>
+          <p class="hint">Enter เพื่อส่ง • Shift + Enter เพื่อขึ้นบรรทัดใหม่</p>
+        </div>
+      </section>
+    </main>
+  </div>
 
-</div>
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const chatForm = document.getElementById('chat-form');
+    const questionInput = document.getElementById('question');
+    const sendButton = document.getElementById('send-button');
+    const clearButton = document.getElementById('clear-chat');
+    const initialChat = chatBox.innerHTML;
 
-
-<script>
-
-async function typeText(text){
-
-    let chat = document.getElementById("chat")
-
-    let p = document.createElement("p")
-
-    p.className = "ai"
-
-    p.innerHTML = "🤖 "
-
-    chat.appendChild(p)
-
-    for(let i = 0; i < text.length; i++){
-
-        p.innerHTML += text[i]
-
-        chat.scrollTop = chat.scrollHeight
-
-        await new Promise(resolve =>
-            setTimeout(resolve, 30)
-        )
-    }
-}
-
-
-async function sendMessage(){
-
-    let text = document.getElementById("message").value
-
-    if(text == ""){
-        return
+    function resizeInput() {
+      questionInput.style.height = 'auto';
+      questionInput.style.height = Math.min(questionInput.scrollHeight, 140) + 'px';
     }
 
-    document.getElementById("message").value = ""
-
-    let chat = document.getElementById("chat")
-    let history = document.getElementById("history")
-
-    // User message
-    chat.innerHTML +=
-        "<p class='user'>🧑 " + text + "</p>"
-
-    // History
-    history.innerHTML +=
-        "<p>" + text + "</p>"
-
-    chat.scrollTop = chat.scrollHeight
-
-
-    let response = await fetch("/ask", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            question: text
-        })
-    })
-
-
-    let data = await response.json()
-
-    await typeText(data.answer)
-}
-
-
-// New Chat
-function newChat(){
-
-    document.getElementById("chat").innerHTML = ""
-}
-
-
-// Press Enter to Send
-function handleEnter(event){
-
-    if(event.key === "Enter"){
-
-        sendMessage()
+    function scrollBottom() {
+      requestAnimationFrame(() => {
+        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+      });
     }
-}
 
-</script>
+    function addMessage(role, text, loading = false) {
+      const article = document.createElement('article');
+      article.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
 
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = role === 'user' ? 'คุณ' : 'AI';
+
+      const body = document.createElement('div');
+      body.className = 'message-body';
+
+      const sender = document.createElement('div');
+      sender.className = 'sender';
+      sender.textContent = role === 'user' ? 'คุณ' : 'School AI';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+
+      if (loading) {
+        article.id = 'typing-message';
+        bubble.classList.add('typing');
+        bubble.innerHTML = '<span></span><span></span><span></span>';
+      } else {
+        bubble.textContent = text;
+      }
+
+      body.append(sender, bubble);
+      article.append(avatar, body);
+      chatBox.appendChild(article);
+      scrollBottom();
+      return article;
+    }
+
+    function setBusy(busy) {
+      questionInput.disabled = busy;
+      sendButton.disabled = busy;
+      sendButton.classList.toggle('busy', busy);
+    }
+
+    async function sendQuestion(rawQuestion) {
+      const question = rawQuestion.trim();
+      if (!question || sendButton.disabled) return;
+
+      addMessage('user', question);
+      questionInput.value = '';
+      resizeInput();
+      setBusy(true);
+      const typing = addMessage('ai', '', true);
+
+      try {
+        const response = await fetch('/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+
+        let data = {};
+        try { data = await response.json(); } catch (_) {}
+        typing.remove();
+
+        if (!response.ok) {
+          throw new Error(data.answer || 'ระบบไม่สามารถตอบคำถามได้ในขณะนี้');
+        }
+
+        addMessage('ai', data.answer || 'ขออภัย ระบบไม่ได้รับคำตอบ');
+      } catch (error) {
+        typing.remove();
+        addMessage('ai', error.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+      } finally {
+        setBusy(false);
+        questionInput.focus();
+      }
+    }
+
+    chatForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      sendQuestion(questionInput.value);
+    });
+
+    questionInput.addEventListener('input', resizeInput);
+    questionInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        chatForm.requestSubmit();
+      }
+    });
+
+    document.querySelectorAll('[data-question]').forEach((button) => {
+      button.addEventListener('click', () => sendQuestion(button.dataset.question || ''));
+    });
+
+    clearButton.addEventListener('click', () => {
+      chatBox.innerHTML = initialChat;
+      questionInput.value = '';
+      resizeInput();
+      questionInput.focus();
+    });
+
+    resizeInput();
+  </script>
 </body>
-
 </html>
