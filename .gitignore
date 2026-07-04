@@ -1,14 +1,5 @@
-# Secret files
 .env
-.env.*
-
-# Python virtual environment
-venv/
-.venv/
-
-# Python cache
 __pycache__/
 *.pyc
-
-# VS Code settings
-.vscode/
+.venv/
+venv/

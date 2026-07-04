@@ -3,182 +3,289 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b5ed7">
-  <meta name="description" content="ลูกผึ้ง AI ผู้ช่วยตอบคำถามเกี่ยวกับข้อมูลโรงเรียน">
-  <title>ลูกผึ้ง AI</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="theme-color" content="#d92f74">
+  <meta name="description" content="Vachiralai School AI ผู้ช่วยข้อมูลโรงเรียนวชิราลัยยะมะกะตะ">
+  <title>Vachiralai School AI</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
 </head>
+
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-logo" aria-hidden="true">🎓</div>
-        <div>
-          <h1>ลูกผึ้ง AI</h1>
-          <p><span class="online-dot"></span>ผู้ช่วยข้อมูลโรงเรียน</p>
+  <div class="background-orb orb-one" aria-hidden="true"></div>
+  <div class="background-orb orb-two" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="กลับสู่หน้าหลัก">
+        <span class="brand-logo-wrap">
+          <img
+            class="brand-logo"
+            src="{{ url_for('static', filename='images/logo.svg') }}"
+            alt="ตราสัญลักษณ์โรงเรียนวชิราลัยยะมะกะตะ"
+          >
+        </span>
+
+        <span class="brand-copy">
+          <strong>{{ school.get('name_th', 'โรงเรียนวชิราลัยยะมะกะตะ') }}</strong>
+          <small>{{ school.get('name_en', 'Vachiralai Yamakata School') }}</small>
+        </span>
+      </a>
+
+      <nav class="header-nav" aria-label="เมนูหลัก">
+        <a href="#assistant">ผู้ช่วย AI</a>
+        <a href="#school-info">ข้อมูลโรงเรียน</a>
+        <a class="nav-button" href="#contact">ติดต่อเรา</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="page-shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="eyebrow">
+          <span class="status-dot" aria-hidden="true"></span>
+          ระบบผู้ช่วยข้อมูลโรงเรียน
+        </div>
+
+        <h1 id="hero-title">
+          ถามข้อมูลโรงเรียนได้ง่าย
+          <span>รวดเร็ว และเป็นมิตร</span>
+        </h1>
+
+        <p>
+          Vachiralai School AI ช่วยค้นหาข้อมูลพื้นฐานของโรงเรียน
+          เวลาเรียน การสมัครเรียน อาคารสถานที่ ชมรม และช่องทางติดต่อ
+          ได้ทุกอุปกรณ์
+        </p>
+
+        <div class="hero-actions">
+          <a class="primary-button" href="#assistant">
+            เริ่มถาม School AI
+            <span aria-hidden="true">→</span>
+          </a>
+          <a class="secondary-button" href="#school-info">ดูข้อมูลโรงเรียน</a>
+        </div>
+
+        <div class="hero-trust">
+          <span>✓ รองรับโทรศัพท์มือถือ</span>
+          <span>✓ ใช้ข้อมูลโรงเรียนเป็นหลัก</span>
+          <span>✓ ไม่ปะปนประวัติแชตระหว่างผู้ใช้</span>
         </div>
       </div>
-      <button id="clear-chat" class="clear-button" type="button" title="เริ่มบทสนทนาใหม่" aria-label="เริ่มบทสนทนาใหม่">↻</button>
-    </header>
 
-    <main class="layout">
-      <aside class="intro-card">
-        <span class="eyebrow">ยินดีต้อนรับ</span>
-        <h2>ค้นหาข้อมูลโรงเรียนได้ง่ายขึ้น</h2>
-        <p>ถามข้อมูลเกี่ยวกับคุณครู อาคารเรียน ตารางเรียน ข่าวประชาสัมพันธ์ และข้อมูลอื่นที่มีอยู่ในระบบ</p>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="visual-card visual-card-main">
+          <div class="mini-header">
+            <span class="mini-logo">
+              <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="">
+            </span>
+            <span>
+              <strong>Vachiralai AI</strong>
+              <small>พร้อมให้บริการ</small>
+            </span>
+          </div>
 
-        <div class="quick-grid" aria-label="คำถามแนะนำ">
-          <button type="button" class="quick-button" data-question="โรงเรียนมีข้อมูลอะไรบ้าง"><span>🏫</span>ข้อมูลโรงเรียน</button>
-          <button type="button" class="quick-button" data-question="มีข้อมูลคุณครูอะไรบ้าง"><span>👩‍🏫</span>ข้อมูลคุณครู</button>
-          <button type="button" class="quick-button" data-question="มีอาคารเรียนอะไรบ้าง"><span>🏢</span>อาคารเรียน</button>
-          <button type="button" class="quick-button" data-question="มีข่าวประชาสัมพันธ์อะไรบ้าง"><span>📢</span>ข่าวประชาสัมพันธ์</button>
+          <div class="preview-bubble preview-user">โรงเรียนเปิดกี่โมงครับ?</div>
+          <div class="preview-bubble preview-ai">
+            ประตูโรงเรียนเปิดเวลา 06.00 น. และเริ่มเรียนเวลา 08.30 น. ครับ
+          </div>
+
+          <div class="preview-composer">
+            <span>พิมพ์คำถามของคุณ...</span>
+            <span class="preview-send">↑</span>
+          </div>
         </div>
 
-        <div class="notice">🔒 ไม่ควรส่งรหัสผ่านหรือข้อมูลส่วนตัวที่สำคัญ</div>
+        <div class="floating-badge badge-top">AI School Assistant</div>
+        <div class="floating-badge badge-bottom">Pink & White Edition</div>
+      </div>
+    </section>
+
+    <section id="assistant" class="workspace" aria-labelledby="assistant-title">
+      <aside id="school-info" class="info-panel">
+        <div class="section-heading">
+          <span class="section-icon">🏫</span>
+          <div>
+            <p>School Information</p>
+            <h2>ข้อมูลโรงเรียน</h2>
+          </div>
+        </div>
+
+        <div class="school-card">
+          <div class="school-card-logo">
+            <img
+              src="{{ url_for('static', filename='images/logo.svg') }}"
+              alt="โลโก้โรงเรียน"
+            >
+          </div>
+
+          <h3>{{ school.get('name_th', 'โรงเรียนวชิราลัยยะมะกะตะ') }}</h3>
+          <p>{{ school.get('name_en', 'Vachiralai Yamakata School') }}</p>
+        </div>
+
+        <dl class="facts-list">
+          <div>
+            <dt>สีประจำโรงเรียน</dt>
+            <dd>
+              {% for color in school.get('colors', ['ชมพู', 'ขาว']) %}
+                <span class="color-pill">{{ color }}</span>
+              {% endfor %}
+            </dd>
+          </div>
+
+          <div>
+            <dt>เวลาเปิดทำการ</dt>
+            <dd>
+              {{ school.get('office_hours', {}).get('days', 'วันจันทร์ถึงวันศุกร์') }}
+              <br>
+              {{ school.get('office_hours', {}).get('time', '06.00-18.00 น.') }}
+            </dd>
+          </div>
+
+          <div>
+            <dt>โทรศัพท์</dt>
+            <dd>
+              <a href="tel:{{ school.get('phone', '053423536') }}">
+                {{ school.get('phone', '053 423 536') }}
+              </a>
+            </dd>
+          </div>
+
+          <div>
+            <dt>อีเมล</dt>
+            <dd>
+              <a href="mailto:{{ school.get('email', '') }}">
+                {{ school.get('email', 'the_vachiralai@hotmail.com') }}
+              </a>
+            </dd>
+          </div>
+        </dl>
+
+        <div class="motto-card">
+          <span>คำขวัญ</span>
+          <p>{{ school.get('motto', 'คนดี มีวินัย กายและใจอดทน') }}</p>
+        </div>
+
+        {% if updated_at %}
+        <p class="last-updated">ข้อมูลอัปเดตล่าสุด: {{ updated_at }}</p>
+        {% endif %}
       </aside>
 
-      <section class="chat-card" aria-label="หน้าต่างสนทนา">
-        <div id="chat-box" class="chat-box" aria-live="polite">
-          <div class="date-chip">วันนี้</div>
-          <article class="message ai-message">
-            <div class="avatar">AI</div>
-            <div class="message-body">
-              <div class="sender">ลูกผึ้ง AI</div>
-              <div class="bubble">สวัสดีครับ 👋 ผมพร้อมช่วยค้นหาและตอบคำถามเกี่ยวกับข้อมูลของโรงเรียน เลือกคำถามแนะนำหรือพิมพ์คำถามด้านล่างได้เลยครับ</div>
+      <section class="chat-panel" aria-labelledby="assistant-title">
+        <div class="chat-header">
+          <div class="assistant-identity">
+            <span class="assistant-avatar">
+              <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="">
+            </span>
+
+            <div>
+              <h2 id="assistant-title">Vachiralai School AI</h2>
+              <p><span class="online-dot"></span> พร้อมตอบคำถาม</p>
             </div>
-          </article>
+          </div>
+
+          <button id="clearChatButton" class="icon-button" type="button" aria-label="ล้างประวัติการสนทนา">
+            <span aria-hidden="true">↻</span>
+            <span class="desktop-only">เริ่มแชตใหม่</span>
+          </button>
         </div>
 
-        <div class="composer-wrap">
-          <form id="chat-form" class="composer">
-            <label class="sr-only" for="question">พิมพ์คำถาม</label>
-            <textarea id="question" rows="1" maxlength="2000" autocomplete="off" enterkeyhint="send" placeholder="พิมพ์คำถามของคุณ..." required></textarea>
-            <button id="send-button" class="send-button" type="submit" aria-label="ส่งข้อความ">➤</button>
-          </form>
-          <p class="hint">Enter เพื่อส่ง • Shift + Enter เพื่อขึ้นบรรทัดใหม่</p>
+        <div id="chatMessages" class="chat-messages" aria-live="polite" aria-label="ข้อความสนทนา"></div>
+
+        <div class="quick-questions" aria-label="คำถามแนะนำ">
+          <button type="button" data-question="โรงเรียนเปิดกี่โมง">เวลาเปิดเรียน</button>
+          <button type="button" data-question="สมัครเรียนได้ที่ไหน">การสมัครเรียน</button>
+          <button type="button" data-question="โรงเรียนมีชมรมอะไรบ้าง">ชมรมในโรงเรียน</button>
+          <button type="button" data-question="ขอข้อมูลติดต่อโรงเรียน">ข้อมูลติดต่อ</button>
         </div>
+
+        <form id="chatForm" class="chat-composer">
+          <label class="sr-only" for="questionInput">พิมพ์คำถาม</label>
+          <textarea
+            id="questionInput"
+            name="question"
+            rows="1"
+            maxlength="600"
+            placeholder="พิมพ์คำถามเกี่ยวกับโรงเรียน..."
+            autocomplete="off"
+          ></textarea>
+
+          <button id="sendButton" class="send-button" type="submit" aria-label="ส่งคำถาม">
+            <span class="send-label">ส่ง</span>
+            <span aria-hidden="true">↑</span>
+          </button>
+        </form>
+
+        <p class="composer-note">
+          AI อาจตอบผิดพลาดได้ โปรดตรวจสอบข้อมูลสำคัญกับทางโรงเรียนอีกครั้ง
+        </p>
       </section>
-    </main>
-  </div>
+    </section>
 
-  <script>
-    const chatBox = document.getElementById('chat-box');
-    const chatForm = document.getElementById('chat-form');
-    const questionInput = document.getElementById('question');
-    const sendButton = document.getElementById('send-button');
-    const clearButton = document.getElementById('clear-chat');
-    const initialChat = chatBox.innerHTML;
+    <section class="feature-section" aria-labelledby="features-title">
+      <div class="section-title-center">
+        <p>New Experience</p>
+        <h2 id="features-title">ระบบแนวคิดใหม่เพื่อการสื่อสารที่ง่ายขึ้น</h2>
+      </div>
 
-    function resizeInput() {
-      questionInput.style.height = 'auto';
-      questionInput.style.height = Math.min(questionInput.scrollHeight, 140) + 'px';
-    }
+      <div class="feature-grid">
+        <article>
+          <span>⚡</span>
+          <h3>ตอบได้รวดเร็ว</h3>
+          <p>ถามข้อมูลที่ต้องการได้ทันที โดยไม่ต้องค้นหาหลายหน้า</p>
+        </article>
 
-    function scrollBottom() {
-      requestAnimationFrame(() => {
-        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-      });
-    }
+        <article>
+          <span>📱</span>
+          <h3>ใช้งานง่ายทุกอุปกรณ์</h3>
+          <p>ออกแบบใหม่ให้เหมาะกับมือถือ แท็บเล็ต และคอมพิวเตอร์</p>
+        </article>
 
-    function addMessage(role, text, loading = false) {
-      const article = document.createElement('article');
-      article.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
+        <article>
+          <span>🔐</span>
+          <h3>แชตแยกตามผู้ใช้</h3>
+          <p>ประวัติการสนทนาเก็บในเบราว์เซอร์ของผู้ใช้แต่ละคน</p>
+        </article>
+      </div>
+    </section>
+  </main>
 
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar';
-      avatar.textContent = role === 'user' ? 'คุณ' : 'AI';
+  <footer id="contact" class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="">
+        <div>
+          <strong>{{ school.get('name_th', 'โรงเรียนวชิราลัยยะมะกะตะ') }}</strong>
+          <span>{{ school.get('address', '') }}</span>
+        </div>
+      </div>
 
-      const body = document.createElement('div');
-      body.className = 'message-body';
+      <div class="footer-links">
+        {% if school.get('website') %}
+        <a href="{{ school.get('website') }}" target="_blank" rel="noopener noreferrer">เว็บไซต์โรงเรียน</a>
+        {% endif %}
 
-      const sender = document.createElement('div');
-      sender.className = 'sender';
-      sender.textContent = role === 'user' ? 'คุณ' : 'ลูกผึ้ง AI';
+        {% if school.get('facebook') %}
+        <a href="{{ school.get('facebook') }}" target="_blank" rel="noopener noreferrer">Facebook</a>
+        {% endif %}
 
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
+        {% if school.get('email') %}
+        <a href="mailto:{{ school.get('email') }}">อีเมล</a>
+        {% endif %}
+      </div>
+    </div>
 
-      if (loading) {
-        article.id = 'typing-message';
-        bubble.classList.add('typing');
-        bubble.innerHTML = '<span></span><span></span><span></span>';
-      } else {
-        bubble.textContent = text;
-      }
+    <p class="copyright">
+      © <span id="currentYear"></span> Vachiralai School AI
+    </p>
+  </footer>
 
-      body.append(sender, bubble);
-      article.append(avatar, body);
-      chatBox.appendChild(article);
-      scrollBottom();
-      return article;
-    }
-
-    function setBusy(busy) {
-      questionInput.disabled = busy;
-      sendButton.disabled = busy;
-      sendButton.classList.toggle('busy', busy);
-    }
-
-    async function sendQuestion(rawQuestion) {
-      const question = rawQuestion.trim();
-      if (!question || sendButton.disabled) return;
-
-      addMessage('user', question);
-      questionInput.value = '';
-      resizeInput();
-      setBusy(true);
-      const typing = addMessage('ai', '', true);
-
-      try {
-        const response = await fetch('/ask', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question })
-        });
-
-        let data = {};
-        try { data = await response.json(); } catch (_) {}
-        typing.remove();
-
-        if (!response.ok) {
-          throw new Error(data.answer || 'ระบบไม่สามารถตอบคำถามได้ในขณะนี้');
-        }
-
-        addMessage('ai', data.answer || 'ขออภัย ระบบไม่ได้รับคำตอบ');
-      } catch (error) {
-        typing.remove();
-        addMessage('ai', error.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
-      } finally {
-        setBusy(false);
-        questionInput.focus();
-      }
-    }
-
-    chatForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      sendQuestion(questionInput.value);
-    });
-
-    questionInput.addEventListener('input', resizeInput);
-    questionInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        chatForm.requestSubmit();
-      }
-    });
-
-    document.querySelectorAll('[data-question]').forEach((button) => {
-      button.addEventListener('click', () => sendQuestion(button.dataset.question || ''));
-    });
-
-    clearButton.addEventListener('click', () => {
-      chatBox.innerHTML = initialChat;
-      questionInput.value = '';
-      resizeInput();
-      questionInput.focus();
-    });
-
-    resizeInput();
-  </script>
+  <noscript>
+    <div class="noscript-warning">
+      กรุณาเปิดใช้งาน JavaScript เพื่อใช้ระบบ School AI
+    </div>
+  </noscript>
 </body>
 </html>
