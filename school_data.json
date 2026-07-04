@@ -1,17 +1,51 @@
 {
-  "library": {
-    "keywords": ["ห้องสมุด", "library", "หนังสือ"],
-    "answer": "ห้องสมุดเปิด 08:00 - 16:30"
-  },
-
-  "club": {
-    "keywords": ["ชมรม", "กิจกรรม", "club"],
-    "answer": "มีชมรม Robotics, ดนตรี, ฟุตบอล"
+  "school": {
+    "name": "โรงเรียนวชิราลัยยะมะกะตะ",
+    "open_time": "06:30",
+    "close_time": "18:00",
+    "address": "จังหวัดเชียงใหม่ ตำบลหนองผึ้ง อำเภอสารภี",
+    "phone": "053 423 536",
+    "website": "https://vachiralai.ac.th/"
   },
 
   "director": {
-  "keywords": ["ผอ", "ผู้อำนวยการ", "director"],
-  "answer": "ผู้อำนวยการคือ นายสมชาย ใจดี",
-  "age": "ผู้อำนวยการอายุ 52 ปี"
-}
+    "name": "นายคนอง ตนเล็ก",
+    "age": "70 ปี"
+  },
+
+  "library": {
+    "open": "ไม่เปิดให้บริการ",
+    "close": "ไม่เปิดให้บริการ"
+  },
+
+  "clubs": [
+    "ดุริยางค์",
+    "ฟุตบอล",
+    "คอมพิวเตอร์",
+    "ศิลปะ",
+    "วิทยาศาสตร์",
+    "คณิตศาสตร์",
+    "ภาษาอังกฤษ"
+  ],
+
+  "uniform": {
+    "male": "เสื้อเชิ้ตสีขาว กางเกงสีกลม พร้อมเน็กไท",
+    "female": "เสื้อเชิ้ตสีขาว กระโปรงสีกลม พร้อมเน็กไท"
+  },
+
+  "canteen": {
+    "open": "06:30",
+    "close": "16:00"
+  },
+
+  "school hours": {
+    "open": "08:10",
+    "close": "16:00"
+  },
+
+  "contact": {
+    "email": "the_vachiralai@hotmail.com",
+    "facebook": "https://www.facebook.com/cxllme.hanaeda/?locale=th_TH",
+    "phone number": "098-7797-631"
+  }
 }
