@@ -1300,3 +1300,146 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================================================
+   Upgrade 3: Rich AI response formatting and actions
+   ========================================================= */
+
+.message.assistant .message-bubble {
+  white-space: normal;
+}
+
+.message.user .message-bubble {
+  white-space: pre-wrap;
+}
+
+.message.assistant .message-bubble > :first-child {
+  margin-top: 0;
+}
+
+.message.assistant .message-bubble > :last-child {
+  margin-bottom: 0;
+}
+
+.message-bubble p {
+  margin: 0 0 0.8em;
+}
+
+.message-bubble h3,
+.message-bubble h4,
+.message-bubble h5 {
+  margin: 0.85em 0 0.38em;
+  color: var(--pink-900);
+  line-height: 1.4;
+}
+
+.message-bubble h3 {
+  font-size: 1.04rem;
+}
+
+.message-bubble h4,
+.message-bubble h5 {
+  font-size: 0.98rem;
+}
+
+.message-bubble ul,
+.message-bubble ol {
+  margin: 0.42em 0 0.86em;
+  padding-left: 1.35rem;
+}
+
+.message-bubble li {
+  margin: 0.26em 0;
+  padding-left: 0.1rem;
+}
+
+.message-bubble strong {
+  color: var(--pink-900);
+  font-weight: 850;
+}
+
+.message-bubble a {
+  color: var(--pink-700);
+  font-weight: 750;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.message-bubble a:hover {
+  color: var(--pink-900);
+}
+
+.message-bubble code {
+  padding: 0.12em 0.4em;
+  border: 1px solid var(--pink-200);
+  border-radius: 6px;
+  color: var(--pink-900);
+  background: var(--white);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.84em;
+}
+
+.message-bubble blockquote {
+  margin: 0.65em 0;
+  padding: 0.55em 0.8em;
+  border-left: 3px solid var(--pink-500);
+  border-radius: 0 10px 10px 0;
+  color: var(--pink-900);
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.message-meta {
+  margin-top: 7px;
+  color: #94848e;
+  font-size: 0.66rem;
+}
+
+.message-actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.message-action {
+  min-height: 29px;
+  padding: 4px 9px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-weight: 750;
+}
+
+.message-action-primary {
+  border-color: var(--pink-200);
+  color: var(--pink-800);
+  background: var(--pink-50);
+}
+
+.message-action-primary:hover {
+  border-color: var(--pink-300);
+  color: var(--pink-900);
+  background: var(--pink-100);
+}
+
+@media (max-width: 720px) {
+  .message-bubble h3 {
+    font-size: 0.98rem;
+  }
+
+  .message-bubble h4,
+  .message-bubble h5 {
+    font-size: 0.92rem;
+  }
+
+  .message-action {
+    min-height: 32px;
+    padding: 5px 9px;
+  }
+
+  .message-meta {
+    font-size: 0.64rem;
+  }
+}
+
